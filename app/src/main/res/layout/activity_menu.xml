@@ -56,6 +56,16 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"/>
 
+    <Button
+        android:id="@+id/playSoloChallengeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/playSoccerButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#E7BB0E"
+        android:text="Défi Solo" />
+
 
 
 </RelativeLayout>

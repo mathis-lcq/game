@@ -2,6 +2,8 @@ package com.example.game;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ public class BasketBall extends AppCompatActivity {
     private final float SPEED = 0.15f;
     private final float MAX_SWIPE_DISTANCE = 300;
     private final float MIN_SWIPE_DISTANCE = 10;
+    private static final int WINNING_SCORE = 10;
     private CountDownTimer countDownTimer;
     private final long GAME_DURATION = 30000; // 30 seconds
 
@@ -216,13 +219,34 @@ public class BasketBall extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                timerTextView.setText("Time's up!");
+                endGame();
                 ball.setVisibility(View.INVISIBLE);
                 // change activity
             }
         }.start();
     }
 
+    private void endGame() {
+        SharedPreferences preferences = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+        int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+
+        if (score >= WINNING_SCORE) {
+            totalVictories++;
+        }
+
+        preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+
+        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            finish();
+        } else {
+            Intent intent = new Intent(BasketBall.this, EndActivity.class);
+            intent.putExtra("SCORE", score);
+            intent.putExtra("VICTORY", score >= WINNING_SCORE);
+            intent.putExtra("CURRENT_GAME", BasketBall.class.getName());
+            startActivity(intent);
+            finish();
+        }
+    }
     private void startGoalkeeperAnimation() {
         float startX = 0;
         float endX = getScreenWidth() - 300;

@@ -1,6 +1,7 @@
 package com.example.game;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -163,16 +164,28 @@ public class PongGame extends AppCompatActivity {
 
     private void endGame() {
         if (!isGameOver) {
-            Log.d(TAG, "endGame called");
             isGameOver = true; // Définir le drapeau pour éviter les appels multiples
-            handler.removeCallbacks(gameUpdater);
-            Intent intent = new Intent(PongGame.this, EndActivity.class);
-            intent.putExtra("SCORE", playerScore);
-            intent.putExtra("BOT_SCORE", botScore);
-            intent.putExtra("CURRENT_GAME", PongGame.class.getName());
-            Log.d(TAG, "Starting EndActivity");
-            startActivity(intent);
-            finish();
+
+            SharedPreferences preferences = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+            int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+
+            if (playerScore >= WINNING_SCORE) {
+                totalVictories++;
+            }
+
+            preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+
+            if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+                finish();
+            } else {
+                handler.removeCallbacks(gameUpdater);
+                Intent intent = new Intent(PongGame.this, EndActivity.class);
+                intent.putExtra("SCORE", playerScore);
+                intent.putExtra("BOT_SCORE", botScore);
+                intent.putExtra("CURRENT_GAME", PongGame.class.getName());
+                startActivity(intent);
+                finish();
+            }
         }
     }
 }

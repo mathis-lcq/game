@@ -1,6 +1,7 @@
 package com.example.game;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -80,12 +81,25 @@ public class Quizz extends AppCompatActivity {
     }
 
     private void endGame() {
-        Intent intent = new Intent(Quizz.this, EndActivity.class);
-        intent.putExtra("SCORE", score);
-        intent.putExtra("VICTORY", score > WINNING_SCORE);
-        intent.putExtra("CURRENT_GAME", Quizz.class.getName());
-        startActivity(intent);
-        finish();
+        SharedPreferences preferences = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+        int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+
+        if (score >= WINNING_SCORE) {
+            totalVictories++;
+        }
+
+        preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+
+        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            finish();
+        } else {
+            Intent intent = new Intent(Quizz.this, EndActivity.class);
+            intent.putExtra("SCORE", score);
+            intent.putExtra("VICTORY", score > WINNING_SCORE);
+            intent.putExtra("CURRENT_GAME", Quizz.class.getName());
+            startActivity(intent);
+            finish();
+        }
     }
 
     private List<Question> getQuestionList() {

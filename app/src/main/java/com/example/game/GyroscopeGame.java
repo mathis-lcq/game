@@ -1,6 +1,7 @@
 package com.example.game;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -127,12 +128,7 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
                 if (isCollision(player, obstacle)) {
                     Log.d(TAG, "Collision detected during descent!");
                     isGameOver = true;
-                    Intent intent = new Intent(GyroscopeGame.this, EndActivity.class);
-                    intent.putExtra("SCORE", score);
-                    intent.putExtra("CURRENT_GAME", GyroscopeGame.class.getName());
-                    intent.putExtra("VICTORY", score > WINNING_SCORE);
-                    startActivity(intent);
-                    finish();
+                    endGame();
                 } else {
                     if (!isGameOver) {
                         handler.postDelayed(this, 100); // Check every 100ms
@@ -143,6 +139,29 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
         handler.post(collisionChecker);
 
         Log.d(TAG, "Obstacle spawned at X: " + obstacleX);
+    }
+
+    private void endGame() {
+        SharedPreferences preferences = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+        int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+
+        if (score >= WINNING_SCORE) {
+            totalVictories++;
+        }
+
+        preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+
+
+        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            finish();
+        } else {
+            Intent intent = new Intent(GyroscopeGame.this, EndActivity.class);
+            intent.putExtra("SCORE", score);
+            intent.putExtra("CURRENT_GAME", GyroscopeGame.class.getName());
+            intent.putExtra("VICTORY", score > WINNING_SCORE);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private boolean isCollision(View player, View obstacle) {

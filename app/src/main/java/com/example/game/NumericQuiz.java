@@ -1,5 +1,7 @@
 package com.example.game;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +27,7 @@ public class NumericQuiz extends AppCompatActivity {
     private int score = 0;
     private int questionCounter = 0;
     private int totalQuestions = 10;
+    private static int WINNING_SCORE = 8;
 
     private List<NumericQuestion> questionList;
 
@@ -56,7 +59,7 @@ public class NumericQuiz extends AppCompatActivity {
             answerEditText.setText("");
             resultTextView.setText("");
         } else {
-            finishQuiz();
+            endGame();
         }
     }
 
@@ -86,8 +89,26 @@ public class NumericQuiz extends AppCompatActivity {
         loadNewQuestion();
     }
 
-    private void finishQuiz() {
-        Toast.makeText(NumericQuiz.this, "Quiz finished! Your score is: " + score, Toast.LENGTH_SHORT).show();
+    private void endGame() {
+        SharedPreferences preferences = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+        int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+
+        if (score >= WINNING_SCORE) {
+            totalVictories++;
+        }
+
+        preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+
+        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            finish();
+        } else {
+            Intent intent = new Intent(NumericQuiz.this, EndActivity.class);
+            intent.putExtra("SCORE", score);
+            intent.putExtra("VICTORY", score > WINNING_SCORE);
+            intent.putExtra("CURRENT_GAME", NumericQuiz.class.getName());
+            startActivity(intent);
+            finish();
+        }
     }
 
     private List<NumericQuestion> getQuestionList() {
