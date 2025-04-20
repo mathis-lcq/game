@@ -2,6 +2,7 @@ package com.example.game;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -99,12 +100,26 @@ public class ShakeGame extends AppCompatActivity implements SensorEventListener 
         gameTimer.cancel();
         sensorManager.unregisterListener(this);
 
-        Intent intent = new Intent(ShakeGame.this, EndActivity.class);
-        intent.putExtra("SCORE", counter);
-        intent.putExtra("VICTORY", isVictory);
-        intent.putExtra("CURRENT_GAME", ShakeGame.class.getName());
-        startActivity(intent);
-        finish();
+        SharedPreferences preferences = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+        int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+
+        if (isVictory) {
+            totalVictories++;
+        }
+
+        preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+
+        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            finish();
+        } else {
+            Intent intent = new Intent(ShakeGame.this, EndActivity.class);
+            intent.putExtra("SCORE", counter);
+            intent.putExtra("VICTORY", isVictory);
+            intent.putExtra("CURRENT_GAME", ShakeGame.class.getName());
+            startActivity(intent);
+            finish();
+        }
+
     }
 
     @Override
