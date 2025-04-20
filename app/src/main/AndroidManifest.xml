@@ -13,7 +13,28 @@
         android:theme="@style/Theme.Game"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".PongGame"
+            android:exported="false" />
+        <activity
+            android:name=".BasketBall"
+            android:exported="false" />
+        <activity
+            android:name=".GyroscopeGame"
+            android:exported="false" />
+        <activity
+            android:name=".EndActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NumericQuiz"
+            android:exported="false" />
+        <activity
+            android:name=".Quizz"
+            android:exported="false" />
+        <activity
+            android:name=".ShakeGame"
+            android:exported="false" />
+        <activity
+            android:name=".MenuActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

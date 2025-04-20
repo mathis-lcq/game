@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PongGame">
+
+    <View
+        android:id="@+id/playerPaddle"
+        android:layout_width="50dp"
+        android:layout_height="150dp"
+        android:background="@android:color/holo_blue_light"
+        android:layout_gravity="start|center_vertical"/>
+
+    <View
+        android:id="@+id/botPaddle"
+        android:layout_width="50dp"
+        android:layout_height="150dp"
+        android:background="@android:color/holo_red_light"
+        android:layout_gravity="end|center_vertical"/>
+
+    <View
+        android:id="@+id/ball"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@android:color/black"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/playerScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player: 0"
+        android:textSize="18sp"
+        android:layout_gravity="top|start"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/botScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bot: 0"
+        android:textSize="18sp"
+        android:layout_gravity="top|end"
+        android:layout_margin="10dp"/>
+
+</FrameLayout>
