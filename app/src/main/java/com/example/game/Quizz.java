@@ -91,6 +91,10 @@ public class Quizz extends AppCompatActivity {
         preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
 
         if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            Intent intent = new Intent(this, SoloResultActivity.class);
+            intent.putExtra("VICTORY", score >= WINNING_SCORE);
+            intent.putExtra("TOTAL_VICTORIES", getSharedPreferences("SoloChallenge", MODE_PRIVATE).getInt("TOTAL_VICTORIES", 0));
+            startActivity(intent);
             finish();
         } else {
             Intent intent = new Intent(Quizz.this, EndActivity.class);

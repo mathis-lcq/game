@@ -22,25 +22,14 @@ public class EndActivity extends AppCompatActivity {
         Button replayButton = findViewById(R.id.replayButton);
         Button menuButton = findViewById(R.id.menuButton);
 
-        int score = getIntent().getIntExtra("SCORE", 0);
-        boolean isVictory = getIntent().getBooleanExtra("VICTORY", false);
         final String currentGameClass = getIntent().getStringExtra("CURRENT_GAME");
         int totalVictories = getIntent().getIntExtra("TOTAL_VICTORIES", 0);
         int totalGames = getIntent().getIntExtra("TOTAL_GAMES", 1);
         String mode = getIntent().getStringExtra("MODE");
-        mode = (mode != null) ? mode : "Solo";
 
-        if (mode.equals("Solo")) {
-            if (totalVictories == totalGames) {
-                resultTextView.setText("Victory! You won all challenges!");
-            } else {
-                resultTextView.setText("Defeat! You won " + totalVictories + " out of " + totalGames + " challenges.");
-            }
-        }
+        scoreTextView.setText("Your Score: " + totalVictories +" / "+ totalGames);
 
-        scoreTextView.setText("Your Score: " + score);
-
-        if (isVictory) {
+        if (totalVictories>=2) {
             resultTextView.setText("Victory!");
             mediaPlayer = MediaPlayer.create(this, R.raw.win);
         } else {
@@ -55,9 +44,10 @@ public class EndActivity extends AppCompatActivity {
         }
 
         replayButton.setOnClickListener(v -> {
+            getSharedPreferences("SoloChallenge", MODE_PRIVATE).edit().putInt("TOTAL_VICTORIES", 0).apply();
             // Redirigez vers le jeu approprié
             assert currentGameClass != null;
-            Intent intent = null; // ou GyroscopeGame.class
+            Intent intent = null;
             try {
                 intent = new Intent(EndActivity.this, Class.forName(currentGameClass));
             } catch (ClassNotFoundException e) {
