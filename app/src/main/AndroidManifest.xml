@@ -13,6 +13,10 @@
         android:theme="@style/Theme.Game"
         tools:targetApi="31">
         <activity
+            android:name=".SoloResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Game" />
+        <activity
             android:name=".PongGame"
             android:exported="false" />
         <activity

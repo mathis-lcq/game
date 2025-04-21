@@ -29,7 +29,7 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
     private TextView scoreTextView;
 
     private int score = 0;
-    private static int WINNING_SCORE = 50;
+    private static int WINNING_SCORE = 20;
     private boolean isGameOver = false;
 
     private Handler handler = new Handler();
@@ -40,6 +40,9 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
                 score++;
                 scoreTextView.setText("Score: " + score);
                 handler.postDelayed(this, 1000);
+                if (score >= WINNING_SCORE) {
+                    endGame();
+                }
             }
         }
     };
@@ -49,7 +52,7 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
         public void run() {
             if (!isGameOver) {
                 spawnObstacle();
-                handler.postDelayed(this, 2000); // Spawn obstacle every 2 seconds
+                handler.postDelayed(this, 1000); // Spawn obstacle every 2 seconds
             }
         }
     };
@@ -118,7 +121,7 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
         // Animate obstacle falling
         obstacle.animate()
                 .translationY(gameFrame.getHeight())
-                .setDuration(3000)
+                .setDuration(2000)
                 .withEndAction(() -> gameFrame.removeView(obstacle));
 
         // Check for collisions during the descent
@@ -153,6 +156,10 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
 
 
         if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            Intent intent = new Intent(this, SoloResultActivity.class);
+            intent.putExtra("VICTORY", score >= WINNING_SCORE);
+            intent.putExtra("TOTAL_VICTORIES", getSharedPreferences("SoloChallenge", MODE_PRIVATE).getInt("TOTAL_VICTORIES", 0));
+            startActivity(intent);
             finish();
         } else {
             Intent intent = new Intent(GyroscopeGame.this, EndActivity.class);

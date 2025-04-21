@@ -121,14 +121,7 @@ public class MenuActivity extends AppCompatActivity {
         intent.putExtra("TOTAL_VICTORIES", totalVictories);
         intent.putExtra("TOTAL_GAMES", selectedGames.size());
 
-        // Réinitialiser les préférences après utilisation
-        preferences.edit().putInt("TOTAL_VICTORIES", 0).apply();
-
         startActivity(intent);
-    }
-
-    public void addVictory() {
-        totalVictories++;
     }
 
     private String serializeGames(List<Class<?>> games) {
