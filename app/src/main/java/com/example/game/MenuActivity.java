@@ -22,6 +22,9 @@ public class MenuActivity extends AppCompatActivity {
     private int currentGameIndex = 0;
     private int totalVictories = 0;
     private final static int NB_GAMES = 3;
+    private boolean isDuoChallenge = false;
+    private boolean isSoloChallenge = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,10 @@ public class MenuActivity extends AppCompatActivity {
         Button playQuizzButton = findViewById(R.id.playQuizzButton);
         Button playNumericQuizButton = findViewById(R.id.playNumericQuizButton);
         Button playSoccerButton = findViewById(R.id.playSoccerButton);
+
         Button playSoloChallengeButton = findViewById(R.id.playSoloChallengeButton);
+        Button playDuoChallengeButton = findViewById(R.id.playDuoChallengeButton);
+        Button findPlayerButton = findViewById(R.id.findPlayerButton);
 
         playGyroscopeGameButton.setOnClickListener(v -> startGame(GyroscopeGame.class));
         playShakeGameButton.setOnClickListener(v -> startGame(ShakeGame.class));
@@ -50,10 +56,16 @@ public class MenuActivity extends AppCompatActivity {
         playSoccerButton.setOnClickListener(v -> startGame(BasketBall.class));
 
         playSoloChallengeButton.setOnClickListener(v -> startSoloChallenge());
-
+        playDuoChallengeButton.setOnClickListener(v -> startDuoChallenge());
+        findPlayerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MenuActivity.this, FindPlayerActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void startSoloChallenge() {
+        isSoloChallenge = true;
+        isDuoChallenge = false;
         selectedGames.clear();
 
         // Sélectionner aléatoirement un jeu de chaque catégorie
@@ -74,6 +86,39 @@ public class MenuActivity extends AppCompatActivity {
         startNextGame();
     }
 
+    private void startDuoChallenge() {
+        isDuoChallenge = true;
+        isSoloChallenge = false;
+        selectedGames.clear();
+        currentGameIndex = 0;
+        totalVictories = 0;
+
+        selectedGames.add(pickRandomGame(SENSOR_GAMES));
+        selectedGames.add(pickRandomGame(MOVEMENT_GAMES));
+        selectedGames.add(pickRandomGame(QUIZ_GAMES));
+
+        Collections.shuffle(selectedGames);
+
+        SharedPreferences prefs = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
+        prefs.edit()
+                .putInt("CURRENT_INDEX", 0)
+                .putInt("TOTAL_VICTORIES_SERVER", 0)
+                .putInt("TOTAL_VICTORIES_CLIENT", 0)
+                .putString("GAMES", serializeGames(selectedGames))
+                .apply();
+
+        Log.d("Bluetooth", "Duo: ");
+
+        if (isBluetoothConnected()) {
+            Log.d("Bluetooth", "StartGame: ");
+            startNextGame();
+        } else {
+            Log.d("Bluetooth", "StartFindPlayer: ");
+            Intent intent = new Intent(MenuActivity.this, FindPlayerActivity.class);
+            startActivity(intent);
+        }
+    }
+
     private Class<?> pickRandomGame(List<Class<?>> games) {
         return games.get(new java.util.Random().nextInt(games.size()));
     }
@@ -85,14 +130,21 @@ public class MenuActivity extends AppCompatActivity {
             currentGameIndex++;
             SharedPreferences prefs = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
             prefs.edit().putInt("CURRENT_INDEX", currentGameIndex).apply();
+
             startGame(gameClass);
         }
     }
 
     private void startGame(Class<?> gameClass) {
         Intent intent = new Intent(this, gameClass);
-        intent.putExtra("IS_SOLO_CHALLENGE", true);
+        intent.putExtra("IS_SOLO_CHALLENGE", isSoloChallenge);
+        intent.putExtra("IS_DUO_CHALLENGE", isDuoChallenge);
         startActivity(intent);
+    }
+
+    private boolean isBluetoothConnected() {
+        // Implémentez la logique pour vérifier si un appareil Bluetooth est connecté
+        return false;
     }
 
     @Override

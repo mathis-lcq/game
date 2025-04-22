@@ -242,7 +242,10 @@ public class BasketBall extends AppCompatActivity {
 
         preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
 
-        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+        boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
+        boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
+
+        if (isSoloChallenge || isDuoChallenge) {
             Intent intent = new Intent(this, SoloResultActivity.class);
             intent.putExtra("VICTORY", score >= WINNING_SCORE);
             intent.putExtra("TOTAL_VICTORIES", getSharedPreferences("SoloChallenge", MODE_PRIVATE).getInt("TOTAL_VICTORIES", 0));
