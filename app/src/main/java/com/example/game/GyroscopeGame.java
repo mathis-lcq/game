@@ -152,7 +152,10 @@ public class GyroscopeGame extends AppCompatActivity implements SensorEventListe
         preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
 
 
-        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+        boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
+        boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
+
+        if (isSoloChallenge || isDuoChallenge) {
             finish();
         } else {
             Intent intent = new Intent(GyroscopeGame.this, EndActivity.class);

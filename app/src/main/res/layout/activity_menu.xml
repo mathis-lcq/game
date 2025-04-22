@@ -66,6 +66,24 @@
         android:background="#E7BB0E"
         android:text="Défi Solo" />
 
+    <Button
+        android:id="@+id/playDuoChallengeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Défi Duo"
+        android:layout_below="@id/playSoloChallengeButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#33FF57"/>
 
+    <Button
+        android:id="@+id/findPlayerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trouver Joueur"
+        android:layout_below="@id/playDuoChallengeButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#3399FF"/>
 
 </RelativeLayout>

@@ -1,5 +1,7 @@
 package com.example.game;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.game.BluetoothConnectionManager;
 
 public class ShakeGame extends AppCompatActivity implements SensorEventListener {
 
@@ -28,6 +32,11 @@ public class ShakeGame extends AppCompatActivity implements SensorEventListener 
     private static final long GAME_DURATION = 10000; // Durée du jeu en millisecondes (10 secondes)
 
     private CountDownTimer gameTimer;
+    private BluetoothConnectionManager bluetoothConnectionManager;
+    private boolean isServer;
+    private boolean isDuoChallenge;
+    private boolean isSoloChallenge;
+    private boolean isGameOver = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,23 @@ public class ShakeGame extends AppCompatActivity implements SensorEventListener 
         counterTextView = findViewById(R.id.counterTextView);
         statusTextView = findViewById(R.id.statusTextView);
         timerTextView = findViewById(R.id.timerTextView);
+
+        isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
+        isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
+        isServer = getIntent().getBooleanExtra("IS_SERVER", false);
+
+        if (isDuoChallenge) {
+            bluetoothConnectionManager = new BluetoothConnectionManager(this);
+            if (isServer) {
+                bluetoothConnectionManager.startServer();
+            } else {
+                // Assume device address is passed or selected from a list
+                String deviceAddress = getIntent().getStringExtra("DEVICE_ADDRESS");
+                BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+                bluetoothConnectionManager.connectToDevice(device);
+            }
+        }
 
         startGameTimer();
     }
@@ -109,7 +135,41 @@ public class ShakeGame extends AppCompatActivity implements SensorEventListener 
 
         preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
 
-        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+        boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
+        boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
+
+        if (isSoloChallenge) {
+            finish();
+        } else if (isDuoChallenge) {
+            SharedPreferences prefs = getSharedPreferences("SoloChallenge", Context.MODE_PRIVATE);
+            if (isServer) {
+                bluetoothConnectionManager.sendScore(counter);
+                // Wait for client's score and compare
+                bluetoothConnectionManager.receiveScore(clientScore -> {
+                    int serverWins = prefs.getInt("TOTAL_VICTORIES_SERVER", 0);
+                    int clientWins = prefs.getInt("TOTAL_VICTORIES_CLIENT", 0);
+                    if (clientScore < counter) {
+                        serverWins = serverWins + 1;
+                        prefs.edit().putInt("TOTAL_VICTORIES_SERVER", serverWins).apply();
+                    } else {
+                        clientWins = clientWins + 1;
+                        prefs.edit().putInt("TOTAL_VICTORIES2_CLIENT", clientWins).apply();
+                    }
+                });
+            } else {
+                bluetoothConnectionManager.receiveScore(serverScore -> {
+                    int serverWins = prefs.getInt("TOTAL_VICTORIES_SERVER", 0);
+                    int clientWins = prefs.getInt("TOTAL_VICTORIES_CLIENT", 0);
+                    if (serverScore < counter) {
+                        clientWins = clientWins + 1;
+                        prefs.edit().putInt("TOTAL_VICTORIES_CLIENT", clientWins).apply();
+                    } else {
+                        serverWins = serverWins + 1;
+                        prefs.edit().putInt("TOTAL_VICTORIES_SERVER", serverWins).apply();
+                    }
+                    bluetoothConnectionManager.sendScore(counter);
+                });
+            }
             finish();
         } else {
             Intent intent = new Intent(ShakeGame.this, EndActivity.class);
