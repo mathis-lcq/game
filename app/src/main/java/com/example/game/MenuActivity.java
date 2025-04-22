@@ -46,7 +46,6 @@ public class MenuActivity extends AppCompatActivity {
 
         Button playSoloChallengeButton = findViewById(R.id.playSoloChallengeButton);
         Button playDuoChallengeButton = findViewById(R.id.playDuoChallengeButton);
-        Button findPlayerButton = findViewById(R.id.findPlayerButton);
 
         playGyroscopeGameButton.setOnClickListener(v -> startGame(GyroscopeGame.class));
         playShakeGameButton.setOnClickListener(v -> startGame(ShakeGame.class));
@@ -57,10 +56,6 @@ public class MenuActivity extends AppCompatActivity {
 
         playSoloChallengeButton.setOnClickListener(v -> startSoloChallenge());
         playDuoChallengeButton.setOnClickListener(v -> startDuoChallenge());
-        findPlayerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MenuActivity.this, FindPlayerActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void startSoloChallenge() {
@@ -172,6 +167,7 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EndActivity.class);
         intent.putExtra("TOTAL_VICTORIES", totalVictories);
         intent.putExtra("TOTAL_GAMES", selectedGames.size());
+        intent.putExtra("IS_SOLO_CHALLENGE", isSoloChallenge);
 
         startActivity(intent);
     }
