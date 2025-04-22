@@ -116,6 +116,8 @@ public class FindPlayerActivity extends AppCompatActivity {
 
                         Log.d("Bluetooth", "Selected device: " + selectedDevice.getName() + " - " + address);
 
+                        // connect
+
                         // Exemple : démarrer une activité pour se connecter
                         SharedPreferences prefs = getSharedPreferences("SoloChallenge", MODE_PRIVATE);
                         // get next games from pref GAMES
@@ -123,7 +125,7 @@ public class FindPlayerActivity extends AppCompatActivity {
                         String[] gamesArray = games.split(";");
                         Intent intent2;
                         if (gamesArray.length > 0 && !gamesArray[0].isEmpty()) {
-                            String className = gamesArray[0]; // Exemple : "com.example.game.TicTacToeActivity"
+                            String className = gamesArray[0];
 
                             try {
                                 Class<?> activityClass = Class.forName(className);
