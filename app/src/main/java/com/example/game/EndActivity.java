@@ -21,31 +21,35 @@ public class EndActivity extends AppCompatActivity {
 
         boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
 
-        if (isDuoChallenge) {
-            SharedPreferences preferences = getSharedPreferences("Challenge", MODE_PRIVATE);
-            int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
-            int totalGames = getIntent().getIntExtra("TOTAL_GAMES", 3);
+        // if (isDuoChallenge) {
+        //    SharedPreferences preferences = getSharedPreferences("Challenge", MODE_PRIVATE);
+         // 
+           // int totalVictories = preferences.getInt("TOTAL_VICTORIES", 0);
+            //int totalGames = getIntent().getIntExtra("TOTAL_GAMES", 3);
 
-            if (totalVictories > totalGames / 2) {
-                resultTextView.setText("Victory! You won the Duo Challenge!");
-            } else {
-                resultTextView.setText("Defeat! You lost the Duo Challenge.");
-            }
+        final String currentGameClass = getIntent().getStringExtra("CURRENT_GAME");
+        int totalVictories = getIntent().getIntExtra("TOTAL_VICTORIES", 0);
+        int totalGames = getIntent().getIntExtra("TOTAL_GAMES", 1);
+        String mode = getIntent().getStringExtra("MODE");
 
-            replayButton.setOnClickListener(v -> {
-                Intent intent = new Intent(EndActivity.this, MenuActivity.class);
-                intent.putExtra("RESTART_DUO_CHALLENGE", true);
-                startActivity(intent);
-                finish();
-            });
+        scoreTextView.setText("Your Score: " + totalVictories +" / "+ totalGames);
+
+        if (totalVictories>=2) {
+            resultTextView.setText("Victory!");
+            mediaPlayer = MediaPlayer.create(this, R.raw.win);
         } else {
             int playerScore = getIntent().getIntExtra("SCORE", 0);
             boolean isVictory = getIntent().getBooleanExtra("VICTORY", false);
 
-            if (isVictory) {
-                resultTextView.setText("Victory!");
-            } else {
-                resultTextView.setText("Defeat!");
+        replayButton.setOnClickListener(v -> {
+            getSharedPreferences("SoloChallenge", MODE_PRIVATE).edit().putInt("TOTAL_VICTORIES", 0).apply();
+            // Redirigez vers le jeu approprié
+            assert currentGameClass != null;
+            Intent intent = null;
+            try {
+                intent = new Intent(EndActivity.this, Class.forName(currentGameClass));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
 
             replayButton.setOnClickListener(v -> {

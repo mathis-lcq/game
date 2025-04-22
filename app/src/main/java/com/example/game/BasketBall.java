@@ -9,12 +9,14 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,7 +38,7 @@ public class BasketBall extends AppCompatActivity {
     private final float SPEED = 0.15f;
     private final float MAX_SWIPE_DISTANCE = 300;
     private final float MIN_SWIPE_DISTANCE = 10;
-    private static final int WINNING_SCORE = 10;
+    private static final int WINNING_SCORE = 8;
     private CountDownTimer countDownTimer;
     private final long GAME_DURATION = 30000; // 30 seconds
 
@@ -167,8 +169,12 @@ public class BasketBall extends AppCompatActivity {
                 ballX + ball.getWidth() / 2f <= goalX + goalWidth / 2 &&
                 ballY + ball.getHeight() / 2f <= goalY + basket.getHeight()) {
             score++;
+            Toast toast = Toast.makeText(this, "But!!", Toast.LENGTH_SHORT);
             scoreTextView.setText("Score: " + score);
             ball.setVisibility(View.INVISIBLE);
+            if (score >= WINNING_SCORE) {
+                endGame();
+            }
         }
     }
 
@@ -240,6 +246,10 @@ public class BasketBall extends AppCompatActivity {
         boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
 
         if (isSoloChallenge || isDuoChallenge) {
+            Intent intent = new Intent(this, SoloResultActivity.class);
+            intent.putExtra("VICTORY", score >= WINNING_SCORE);
+            intent.putExtra("TOTAL_VICTORIES", getSharedPreferences("SoloChallenge", MODE_PRIVATE).getInt("TOTAL_VICTORIES", 0));
+            startActivity(intent);
             finish();
         } else {
             Intent intent = new Intent(BasketBall.this, EndActivity.class);

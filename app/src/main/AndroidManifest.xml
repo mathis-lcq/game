@@ -32,6 +32,10 @@
             android:name=".FindPlayerActivity"
             android:exported="false" />
         <activity
+            android:name=".SoloResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Game" />
+        <activity
             android:name=".PongGame"
             android:exported="false" />
         <activity

@@ -138,9 +138,9 @@ public class PongGame extends AppCompatActivity {
 
     private void moveBotPaddle() {
         if (ballY > botPaddleY + botPaddle.getHeight() / 2) {
-            botPaddleY += 5; // Déplacer vers le bas
+            botPaddleY += 6; // Déplacer vers le bas
         } else {
-            botPaddleY -= 5; // Déplacer vers le haut
+            botPaddleY -= 6; // Déplacer vers le haut
         }
 
         updatePaddlePosition(botPaddle, botPaddleY);
@@ -175,10 +175,18 @@ public class PongGame extends AppCompatActivity {
 
             preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
 
-            boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
-            boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
 
-            if (isSoloChallenge || isDuoChallenge) {
+            //boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
+            //boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
+
+            //if (isSoloChallenge || isDuoChallenge) {
+
+            if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+                Intent intent = new Intent(this, SoloResultActivity.class);
+                intent.putExtra("VICTORY", playerScore >= WINNING_SCORE);
+                intent.putExtra("TOTAL_VICTORIES", getSharedPreferences("SoloChallenge", MODE_PRIVATE).getInt("TOTAL_VICTORIES", 0));
+                startActivity(intent);
+
                 finish();
             } else {
                 handler.removeCallbacks(gameUpdater);

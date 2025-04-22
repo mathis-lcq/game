@@ -22,7 +22,6 @@ public class NumericQuiz extends AppCompatActivity {
     private TextView questionTextView;
     private EditText answerEditText;
     private Button submitButton;
-    private TextView resultTextView;
 
     private int score = 0;
     private int questionCounter = 0;
@@ -41,7 +40,6 @@ public class NumericQuiz extends AppCompatActivity {
         questionTextView = findViewById(R.id.questionTextView);
         answerEditText = findViewById(R.id.answerEditText);
         submitButton = findViewById(R.id.submitButton);
-        resultTextView = findViewById(R.id.resultTextView);
 
         questionList = getQuestionList();
         Collections.shuffle(questionList);
@@ -57,7 +55,6 @@ public class NumericQuiz extends AppCompatActivity {
             questionTextView.setText(currentQuestion.getQuestion());
             questionCounterTextView.setText(questionCounter + "/" + totalQuestions);
             answerEditText.setText("");
-            resultTextView.setText("");
         } else {
             endGame();
         }
@@ -76,9 +73,9 @@ public class NumericQuiz extends AppCompatActivity {
             if (userAnswer == currentQuestion.getAnswer()) {
                 score++;
                 scoreTextView.setText("Score: " + score);
-                resultTextView.setText("Correct!");
+                Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
             } else {
-                resultTextView.setText("Wrong! The correct answer is: " + currentQuestion.getAnswer());
+                Toast.makeText(this, "Wrong! The correct answer is: " + currentQuestion.getAnswer(), Toast.LENGTH_SHORT).show();
             }
         } catch (NumberFormatException e) {
             Toast.makeText(NumericQuiz.this, "Please enter a valid number", Toast.LENGTH_SHORT).show();
@@ -98,11 +95,15 @@ public class NumericQuiz extends AppCompatActivity {
         }
 
         preferences.edit().putInt("TOTAL_VICTORIES", totalVictories).apply();
+        //boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
+        //boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
 
-        boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
-        boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
-
-        if (isSoloChallenge || isDuoChallenge) {
+        //if (isSoloChallenge || isDuoChallenge) 
+        if (getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false)) {
+            Intent intent = new Intent(this, SoloResultActivity.class);
+            intent.putExtra("VICTORY", score >= WINNING_SCORE);
+            intent.putExtra("TOTAL_VICTORIES", getSharedPreferences("SoloChallenge", MODE_PRIVATE).getInt("TOTAL_VICTORIES", 0));
+            startActivity(intent);
             finish();
         } else {
             Intent intent = new Intent(NumericQuiz.this, EndActivity.class);
