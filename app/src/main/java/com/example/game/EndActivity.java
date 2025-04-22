@@ -30,26 +30,33 @@ public class EndActivity extends AppCompatActivity {
         int totalVictories = getIntent().getIntExtra("TOTAL_VICTORIES", 0);
         int totalGames = getIntent().getIntExtra("TOTAL_GAMES", 1);
         String mode = getIntent().getStringExtra("MODE");
-        mode = (mode != null) ? mode : "Solo";
+
+
+        boolean isSoloChallenge = getIntent().getBooleanExtra("IS_SOLO_CHALLENGE", false);
 
         boolean isDuoChallenge = getIntent().getBooleanExtra("IS_DUO_CHALLENGE", false);
 
-        if (mode.equals("Solo")) {
-            if (totalVictories == totalGames) {
-                resultTextView.setText("Victory! You won all challenges!");
-            } else {
-                resultTextView.setText("Defeat! You won " + totalVictories + " out of " + totalGames + " challenges.");
-            }
-            scoreTextView.setText("Your Score: " + totalVictories +" / "+ totalGames);
-        } else {
+        if (isSoloChallenge) {
             if (totalVictories>=2) {
                 resultTextView.setText("Victory!");
                 mediaPlayer = MediaPlayer.create(this, R.raw.win);
             } else {
-                int playerScore = getIntent().getIntExtra("SCORE", 0);
-                isVictory = getIntent().getBooleanExtra("VICTORY", false);
+                resultTextView.setText("Defeat!");
+                mediaPlayer = MediaPlayer.create(this, R.raw.defeat);
+            }
+            scoreTextView.setText("Your Score: " + totalVictories +" / "+ totalGames);
+        } else {
+            if (isVictory) {
+                resultTextView.setText("Victory!");
+                mediaPlayer = MediaPlayer.create(this, R.raw.win);
+                scoreTextView.setText("Your Score: "+score);
+            } else {
+                resultTextView.setText("Defeat!");
+                mediaPlayer = MediaPlayer.create(this, R.raw.defeat);
+                scoreTextView.setText("Your Score: "+score);
             }
         }
+        mediaPlayer.start();
 
 
 

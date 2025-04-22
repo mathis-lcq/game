@@ -93,7 +93,7 @@ public class FindPlayerActivity extends AppCompatActivity {
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                device.createBond();
+                // device.createBond();
 
 
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -117,6 +117,7 @@ public class FindPlayerActivity extends AppCompatActivity {
                         Log.d("Bluetooth", "Selected device: " + selectedDevice.getName() + " - " + address);
 
                         // connect
+                        device.createBond();
 
                         // Exemple : démarrer une activité pour se connecter
                         SharedPreferences prefs = getSharedPreferences("SoloChallenge", MODE_PRIVATE);

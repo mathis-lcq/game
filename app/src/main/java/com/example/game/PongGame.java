@@ -192,6 +192,7 @@ public class PongGame extends AppCompatActivity {
                 handler.removeCallbacks(gameUpdater);
                 Intent intent = new Intent(PongGame.this, EndActivity.class);
                 intent.putExtra("SCORE", playerScore);
+                intent.putExtra("VICTORY", playerScore >= WINNING_SCORE);
                 intent.putExtra("BOT_SCORE", botScore);
                 intent.putExtra("CURRENT_GAME", PongGame.class.getName());
                 startActivity(intent);

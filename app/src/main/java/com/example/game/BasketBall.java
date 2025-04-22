@@ -40,7 +40,7 @@ public class BasketBall extends AppCompatActivity {
     private final float MIN_SWIPE_DISTANCE = 10;
     private static final int WINNING_SCORE = 8;
     private CountDownTimer countDownTimer;
-    private final long GAME_DURATION = 30000; // 30 seconds
+    private final long GAME_DURATION = 10000; // 30 seconds
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
